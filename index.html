@@ -3,51 +3,49 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#0b0f14">
+  <meta name="theme-color" content="#f6f8fb">
   <title>バス運用履歴</title>
   <link rel="stylesheet" href="./unyo.css">
 </head>
 <body>
   <header class="site-header">
-    <div class="header-inner">
-      <div class="brand-mark">BUS</div>
+    <div class="site-header__inner">
       <div>
-        <div class="eyebrow">OPERATION ARCHIVE</div>
+        <div class="site-kicker">BUS OPERATION ARCHIVE</div>
         <h1>バス運用履歴</h1>
         <div id="updated"></div>
       </div>
     </div>
   </header>
 
-  <main>
-    <section class="controls" aria-label="表示条件">
-      <div class="control-block operator-block">
-        <span class="control-label">事業者</span>
+  <main class="page">
+    <section class="control-panel">
+      <div class="control-group control-group--operator">
+        <div class="control-title">事業者</div>
         <div id="tabs"></div>
       </div>
 
-      <label class="control-block">
-        <span class="control-label">日付</span>
+      <label class="control-group">
+        <span class="control-title">日付</span>
         <select id="date"></select>
       </label>
 
-      <label class="control-block search-block">
-        <span class="control-label">車番検索</span>
-        <input id="search" type="search" inputmode="numeric" placeholder="例 101">
+      <label class="control-group control-group--search">
+        <span class="control-title">車番検索</span>
+        <div class="search-wrap">
+          <input id="search" type="search" inputmode="numeric" autocomplete="off" placeholder="例：101">
+          <button id="clearSearch" type="button" aria-label="検索をクリア">×</button>
+        </div>
       </label>
     </section>
 
-    <section class="result-head">
+    <section class="summary-panel">
       <div id="summary"></div>
       <div id="status">読み込み中...</div>
     </section>
 
-    <section id="list"></section>
+    <section id="list" class="vehicle-list"></section>
   </main>
-
-  <footer>
-    BUS OPERATION ARCHIVE
-  </footer>
 
   <script src="./unyo.js"></script>
 </body>

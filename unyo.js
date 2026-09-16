@@ -1,226 +1,179 @@
-﻿"use strict";
+"use strict";
 
-const S={
-  root:null,
-  op:"enoden",
-  date:"",
-  daily:null,
-  vehicleTimer:null
+const S = {
+  root: null,
+  op: "enoden",
+  date: "",
+  daily: null,
+  vehicleTimer: null
 };
 
-const $=id=>document.getElementById(id);
+const $ = id => document.getElementById(id);
 
-const esc=s=>String(s??"")
-  .replaceAll("&","&amp;")
-  .replaceAll("<","&lt;")
-  .replaceAll(">","&gt;")
-  .replaceAll('"',"&quot;");
+const esc = s => String(s ?? "")
+  .replaceAll("&", "&amp;")
+  .replaceAll("<", "&lt;")
+  .replaceAll(">", "&gt;")
+  .replaceAll('"', "&quot;");
 
-const nsort=(a,b)=>
-  String(a).localeCompare(String(b),"ja",{numeric:true});
+const nsort = (a, b) =>
+  String(a).localeCompare(String(b), "ja", { numeric: true });
 
-function dailyUrl(op,d){
-  const [y,m]=d.split("-");
+function dailyUrl(op, d) {
+  const [y, m] = d.split("-");
   return `./data/${op}/${y}/${m}/${d}.json`;
 }
 
-function vehicleUrl(op,v){
+function vehicleUrl(op, v) {
   return `./data/${op}/vehicles/${encodeURIComponent(v)}.json`;
 }
 
-function route(o){
-  return [o.route_no,o.route_name]
-    .filter(Boolean)
-    .join(" ") || "路線不明";
+function routeParts(o) {
+  const no = String(o?.route_no ?? "").trim();
+  const name = String(o?.route_name ?? "").trim();
+  return {
+    no: no || "系統不明",
+    name
+  };
 }
 
-function operationHtml(o){
+function fmtDate(d) {
+  const m = String(d || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  return m ? `${m[1]}年${Number(m[2])}月${Number(m[3])}日` : d;
+}
+
+function operationHtml(o) {
+  const r = routeParts(o);
+  const depTime = o.departure_time || "--:--";
+  const arrTime = o.arrival_time || "--:--";
+  const origin = o.origin_stop || "始発不明";
+  const dest = o.destination_stop || "終着不明";
+
   return `
     <div class="op">
-      <div class="route">${esc(route(o))}</div>
-      <div>
-        ${esc(
-          [o.origin_stop,o.departure_time]
-            .filter(Boolean)
-            .join(" ") || "始発不明"
-        )}
-        →
-        ${esc(
-          [o.destination_stop,o.arrival_time]
-            .filter(Boolean)
-            .join(" ") || "終着不明"
-        )}
+      <div class="route-block">
+        <div class="route-badge">${esc(r.no)}</div>
+        ${r.name ? `<div class="route-name">${esc(r.name)}</div>` : ""}
+      </div>
+
+      <div class="trip">
+        <div class="time">${esc(depTime)}</div>
+        <div class="stop">${esc(origin)}</div>
+        <div class="arrow">→</div>
+        <div class="time">${esc(arrTime)}</div>
+        <div class="stop">${esc(dest)}</div>
       </div>
     </div>
   `;
 }
 
-/* -------------------------------------------------
-   通常の日別表示
-------------------------------------------------- */
+function drawDaily() {
+  if (!S.daily) return;
 
-function drawDaily(){
-  if(!S.daily)return;
+  const q = $("search").value.trim().toLowerCase();
 
-  const q=$("search").value.trim().toLowerCase();
+  const entries = Object.entries(S.daily.vehicles || {})
+    .filter(([v]) => !q || v.toLowerCase().includes(q))
+    .sort(([a], [b]) => nsort(a, b));
 
-  const entries=Object.entries(S.daily.vehicles||{})
-    .filter(([v])=>
-      !q || v.toLowerCase().includes(q)
-    )
-    .sort(([a],[b])=>nsort(a,b));
+  const visibleOps = entries.reduce((n, [, ops]) => n + (ops?.length || 0), 0);
 
-  $("summary").textContent=
-    `${S.daily.operator_label} / ${S.daily.date} / `+
-    `${S.daily.vehicle_count}台・${S.daily.operation_count}運行`;
+  $("summary").textContent =
+    `${S.daily.operator_label || ""}　${fmtDate(S.daily.date)}　` +
+    `${entries.length}台 / ${visibleOps}運行`;
 
-  $("status").textContent=
-    entries.length ? "" : "該当車両なし";
+  $("status").textContent = q ? `車番「${q}」で絞り込み中` : "";
 
-  $("list").innerHTML=
-    entries.map(([v,ops],i)=>`
-      <article class="vehicle ${i%2?"alt":""}">
-        <div class="vh">
-          <strong>${esc(v)}</strong>
-          <span>${ops.length}運行</span>
-        </div>
-
-        ${ops.map(operationHtml).join("")}
-      </article>
-    `).join("");
-}
-
-/* -------------------------------------------------
-   車番別の最近の運用
-------------------------------------------------- */
-
-function drawVehicleHistory(data){
-
-  const days=[...(data.days||[])]
-    .sort((a,b)=>
-      String(b.date).localeCompare(String(a.date))
-    );
-
-  const total=days.reduce(
-    (n,d)=>n+(d.operations?.length||0),
-    0
-  );
-
-  $("summary").textContent=
-    `${data.operator_label || ""} / `+
-    `${data.vehicle_no}号車 / 最近の運用`;
-
-  $("status").textContent=
-    days.length ? "" : "運用履歴なし";
-
-  $("list").innerHTML=
-    days.map((day,i)=>{
-
-      const ops=day.operations||[];
-
-      return `
-        <article class="vehicle ${i%2?"alt":""}">
-
-          <div class="vh">
-            <strong>${esc(day.date)}</strong>
-            <span>${ops.length}運行</span>
-          </div>
-
-          ${ops.map(operationHtml).join("")}
-
-        </article>
-      `;
-    }).join("");
-
-  if(!days.length){
-    $("summary").textContent=
-      `${data.vehicle_no}号車 / 運用履歴なし`;
+  if (!entries.length) {
+    $("list").innerHTML = `<div class="empty">該当する車両がありません</div>`;
+    return;
   }
+
+  $("list").innerHTML = entries.map(([v, ops]) => `
+    <article class="vehicle">
+      <div class="vh">
+        <strong>${esc(v)}</strong>
+        <span>${ops.length}運行</span>
+      </div>
+      <div class="ops">
+        ${ops.map(operationHtml).join("")}
+      </div>
+    </article>
+  `).join("");
 }
 
-/* -------------------------------------------------
-   車番検索
-------------------------------------------------- */
+function drawVehicleHistory(data) {
+  const days = [...(data.days || [])]
+    .sort((a, b) => String(b.date).localeCompare(String(a.date)));
 
-async function searchVehicle(){
+  const total = days.reduce((n, d) => n + (d.operations?.length || 0), 0);
 
-  const q=$("search").value.trim();
+  $("summary").textContent =
+    `${data.operator_label || ""}　${data.vehicle_no}号車　最近の運用`;
 
-  if(!q){
+  $("status").textContent =
+    `${days.length}日 / ${total}運行`;
+
+  if (!days.length) {
+    $("list").innerHTML = `<div class="empty">この車両の運用履歴はありません</div>`;
+    return;
+  }
+
+  $("list").innerHTML = days.map(day => {
+    const ops = day.operations || [];
+
+    return `
+      <section class="history-day">
+        <div class="history-day__head">
+          <div class="history-day__date">${esc(fmtDate(day.date))}</div>
+          <div class="history-day__count">${ops.length}運行</div>
+        </div>
+        <div class="ops">
+          ${ops.map(operationHtml).join("")}
+        </div>
+      </section>
+    `;
+  }).join("");
+}
+
+async function searchVehicle() {
+  const q = $("search").value.trim();
+
+  if (!q) {
     drawDaily();
     return;
   }
 
-  /*
-    入力途中ではまず選択日の車番絞り込みを表示。
-    完全な車番JSONが存在すれば、その後履歴表示へ切替。
-  */
   drawDaily();
 
-  try{
+  try {
+    const r = await fetch(vehicleUrl(S.op, q), { cache: "no-cache" });
 
-    const r=await fetch(
-      vehicleUrl(S.op,q),
-      {cache:"no-cache"}
-    );
+    if (r.status === 404) return;
+    if (!r.ok) throw new Error(r.status);
 
-    if(r.status===404){
-      return;
-    }
+    if ($("search").value.trim() !== q) return;
 
-    if(!r.ok){
-      throw new Error(r.status);
-    }
-
-    /*
-      fetch中に検索文字が変わった場合、
-      古い結果を表示しない。
-    */
-    if($("search").value.trim()!==q){
-      return;
-    }
-
-    const data=await r.json();
-
+    const data = await r.json();
     drawVehicleHistory(data);
-
-  }catch(e){
-    console.error(
-      "[vehicle history]",
-      e
-    );
+  } catch (e) {
+    console.error("[vehicle history]", e);
   }
 }
 
-/* -------------------------------------------------
-   事業者タブ
-------------------------------------------------- */
+function tabs() {
+  $("tabs").innerHTML = "";
 
-function tabs(){
+  for (const [id, x] of Object.entries(S.root.operators || {})) {
+    const b = document.createElement("button");
+    b.textContent = x.label;
+    b.className = id === S.op ? "active" : "";
 
-  $("tabs").innerHTML="";
-
-  for(
-    const [id,x]
-    of Object.entries(S.root.operators||{})
-  ){
-
-    const b=document.createElement("button");
-
-    b.textContent=x.label;
-    b.className=id===S.op
-      ? "active"
-      : "";
-
-    b.onclick=async()=>{
-
-      S.op=id;
-
-      $("search").value="";
-
+    b.onclick = async () => {
+      S.op = id;
+      $("search").value = "";
       tabs();
       dates();
-
       await load();
     };
 
@@ -228,141 +181,78 @@ function tabs(){
   }
 }
 
-/* -------------------------------------------------
-   日付
-------------------------------------------------- */
+function dates() {
+  const ds = S.root.operators?.[S.op]?.dates || [];
 
-function dates(){
+  $("date").innerHTML =
+    ds.map(d => `<option value="${esc(d)}">${esc(fmtDate(d))}</option>`).join("");
 
-  const ds=
-    S.root.operators?.[S.op]?.dates || [];
-
-  $("date").innerHTML=
-    ds.map(
-      d=>`<option>${esc(d)}</option>`
-    ).join("");
-
-  S.date=ds[0]||"";
-
-  $("date").value=S.date;
+  S.date = ds[0] || "";
+  $("date").value = S.date;
 }
 
-/* -------------------------------------------------
-   日別JSONロード
-------------------------------------------------- */
+async function load() {
+  S.date = $("date").value || S.date;
 
-async function load(){
-
-  S.date=
-    $("date").value || S.date;
-
-  if(!S.date){
-    $("status").textContent="履歴なし";
+  if (!S.date) {
+    $("status").textContent = "履歴なし";
+    $("list").innerHTML = "";
     return;
   }
 
-  $("status").textContent=
-    "読み込み中...";
+  $("status").textContent = "読み込み中...";
+  $("list").innerHTML = "";
 
-  $("list").innerHTML="";
+  try {
+    const r = await fetch(dailyUrl(S.op, S.date), { cache: "no-cache" });
 
-  try{
+    if (!r.ok) throw new Error(r.status);
 
-    const r=await fetch(
-      dailyUrl(S.op,S.date),
-      {cache:"no-cache"}
-    );
+    S.daily = await r.json();
 
-    if(!r.ok){
-      throw new Error(r.status);
-    }
-
-    S.daily=await r.json();
-
-    /*
-      車番検索中なら、その車両履歴を優先
-    */
-    if($("search").value.trim()){
+    if ($("search").value.trim()) {
       await searchVehicle();
-    }else{
+    } else {
       drawDaily();
     }
-
-  }catch(e){
-
+  } catch (e) {
     console.error(e);
-
-    $("status").textContent=
-      "読み込み失敗";
+    $("status").textContent = "読み込み失敗";
   }
 }
 
-/* -------------------------------------------------
-   起動
-------------------------------------------------- */
+(async () => {
+  try {
+    const r = await fetch("./data/index.json", { cache: "no-cache" });
+    if (!r.ok) throw new Error(r.status);
 
-(async()=>{
+    S.root = await r.json();
 
-  try{
+    const ids = Object.keys(S.root.operators || {});
+    if (!ids.includes(S.op)) S.op = ids[0] || "";
 
-    const r=await fetch(
-      "./data/index.json",
-      {cache:"no-cache"}
-    );
-
-    if(!r.ok){
-      throw new Error(r.status);
-    }
-
-    S.root=await r.json();
-
-    const ids=
-      Object.keys(S.root.operators||{});
-
-    if(!ids.includes(S.op)){
-      S.op=ids[0]||"";
-    }
-
-    $("updated").textContent=
-      S.root.generated_at
-        ? `最終更新 ${S.root.generated_at}`
-        : "";
+    $("updated").textContent =
+      S.root.generated_at ? `最終更新 ${S.root.generated_at}` : "";
 
     tabs();
     dates();
-
     await load();
-
-  }catch(e){
-
+  } catch (e) {
     console.error(e);
-
-    $("status").textContent=
-      "先に日次エクスポートを実行してください";
+    $("status").textContent = "データを読み込めませんでした";
   }
-
 })();
 
-/* -------------------------------------------------
-   イベント
-------------------------------------------------- */
+$("date").onchange = load;
 
-$("date").onchange=load;
-
-$("search").oninput=()=>{
-
+$("search").oninput = () => {
   clearTimeout(S.vehicleTimer);
-
-  /*
-    入力中は日別一覧を即座に絞る
-  */
   drawDaily();
+  S.vehicleTimer = setTimeout(searchVehicle, 250);
+};
 
-  /*
-    250ms止まったら車両履歴JSONを確認
-  */
-  S.vehicleTimer=setTimeout(
-    searchVehicle,
-    250
-  );
+$("clearSearch").onclick = () => {
+  $("search").value = "";
+  $("search").focus();
+  drawDaily();
 };
