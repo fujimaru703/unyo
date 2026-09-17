@@ -1,18 +1,16 @@
 *{box-sizing:border-box}
 
 :root{
-  --bg:#eef3f7;
-  --surface:#ffffff;
-  --surface-soft:#f7fafc;
-  --line:#cfd9e2;
-  --line-soft:#e3e9ef;
-  --text:#17212b;
-  --muted:#657687;
-  --blue:#176fa8;
-  --blue-dark:#0d527f;
-  --blue-soft:#e7f2f9;
-  --row-alt:#f8fbfd;
-  --shadow:0 5px 16px rgba(25,45,65,.06);
+  --bg:#f4f4f4;
+  --panel:#fff;
+  --line:#b8b8b8;
+  --line-soft:#d8d8d8;
+  --head:#e8edf2;
+  --subhead:#f1f3f5;
+  --text:#111;
+  --muted:#555;
+  --link:#004f99;
+  --accent:#17699c;
 }
 
 html,body{
@@ -20,538 +18,410 @@ html,body{
   min-height:100%;
   background:var(--bg);
   color:var(--text);
-  font-family:system-ui,-apple-system,"Segoe UI","Yu Gothic UI","Meiryo",sans-serif;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Yu Gothic UI","Meiryo",sans-serif;
 }
 
 button,select,input{font:inherit}
 
 .site-header{
   background:#fff;
-  border-bottom:1px solid var(--line);
+  border-bottom:1px solid #bbb;
 }
 
 .site-header__inner{
-  max-width:1180px;
+  max-width:1100px;
   margin:auto;
-  padding:18px 18px 14px;
+  padding:10px 12px 8px;
 }
 
 .site-kicker{
-  margin-bottom:4px;
-  color:var(--blue);
-  font-size:11px;
-  font-weight:800;
-  letter-spacing:.13em;
+  display:none;
 }
 
 h1{
   margin:0;
-  font-size:27px;
+  font-size:21px;
+  line-height:1.25;
 }
 
 #updated{
-  margin-top:5px;
-  color:var(--muted);
-  font-size:12px;
+  margin-top:3px;
+  color:#666;
+  font-size:10px;
 }
 
 .page{
-  max-width:1180px;
+  max-width:1100px;
   margin:auto;
-  padding:16px;
+  padding:8px 10px 24px;
 }
 
-/* ===== 操作部 ===== */
-
+/* 操作欄 */
 .control-panel{
-  position:sticky;
-  top:8px;
-  z-index:20;
-  display:grid;
-  grid-template-columns:minmax(260px,1.1fr) 180px minmax(240px,.8fr);
-  gap:12px;
-  padding:13px;
+  display:flex;
+  flex-wrap:wrap;
+  align-items:end;
+  gap:8px 12px;
+  padding:7px 8px;
   background:#fff;
   border:1px solid var(--line);
-  border-radius:13px;
-  box-shadow:var(--shadow);
 }
 
 .control-group{
-  min-width:0;
   display:grid;
-  gap:6px;
+  gap:3px;
+  min-width:150px;
+}
+
+.control-group--operator{
+  min-width:230px;
+}
+
+.control-group--search{
+  min-width:190px;
+  flex:1;
+  max-width:300px;
 }
 
 .control-title{
-  color:var(--muted);
-  font-size:11px;
-  font-weight:800;
+  color:#555;
+  font-size:10px;
+  font-weight:700;
 }
 
 #tabs{
   display:flex;
+  gap:3px;
   flex-wrap:wrap;
-  gap:7px;
 }
 
 #tabs button{
-  min-height:40px;
-  padding:7px 14px;
-  border:1px solid var(--line);
-  border-radius:8px;
-  background:#fff;
-  color:var(--text);
+  min-height:30px;
+  padding:3px 10px;
+  border:1px solid #999;
+  border-radius:2px;
+  background:#f7f7f7;
+  color:#111;
   cursor:pointer;
-  font-weight:800;
-}
-
-#tabs button:hover{
-  background:#f4f8fb;
+  font-weight:700;
+  font-size:12px;
 }
 
 #tabs button.active{
-  border-color:var(--blue);
-  background:var(--blue);
-  color:#fff;
+  background:#dceaf4;
+  border-color:#4d7fa3;
+  color:#003c69;
 }
 
 select,input{
   width:100%;
-  min-height:40px;
-  padding:8px 10px;
-  border:1px solid var(--line);
-  border-radius:8px;
-  outline:none;
+  min-height:30px;
+  padding:3px 7px;
+  border:1px solid #999;
+  border-radius:2px;
   background:#fff;
-  color:var(--text);
-}
-
-select:focus,input:focus{
-  border-color:var(--blue);
-  box-shadow:0 0 0 3px rgba(23,111,168,.11);
-}
-
-.search-wrap{position:relative}
-.search-wrap input{padding-right:40px}
-
-#clearSearch{
-  position:absolute;
-  right:5px;
-  top:5px;
-  width:30px;
-  height:30px;
-  border:0;
-  border-radius:6px;
-  background:transparent;
-  color:#7b8c9b;
-  cursor:pointer;
-  font-size:20px;
-}
-
-#clearSearch:hover{background:#eef3f7}
-
-/* ===== 集計 ===== */
-
-.summary-panel{
-  margin:14px 0 9px;
-  padding:12px 14px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:16px;
-  background:#fff;
-  border:1px solid var(--line);
-  border-radius:10px;
-}
-
-#summary{
-  font-size:15px;
-  font-weight:900;
-}
-
-#status{
-  color:var(--muted);
+  color:#111;
   font-size:12px;
 }
 
-/* ===== 車両カード ===== */
+.search-wrap{position:relative}
+.search-wrap input{padding-right:28px}
 
+#clearSearch{
+  position:absolute;
+  right:2px;
+  top:2px;
+  width:25px;
+  height:25px;
+  padding:0;
+  border:0;
+  background:transparent;
+  cursor:pointer;
+  font-size:17px;
+}
+
+.summary-panel{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  margin:6px 0;
+  padding:4px 2px;
+  font-size:12px;
+}
+
+#summary{font-weight:700}
+#status{color:#666}
+
+/* 車両一覧 */
 .vehicle-list{
   display:grid;
-  gap:10px;
+  gap:9px;
 }
 
 .vehicle,
 .history-day{
-  overflow:hidden;
   background:#fff;
-  border:1px solid var(--line);
-  border-radius:11px;
-  box-shadow:var(--shadow);
+  border:1px solid #aaa;
 }
 
 .vh,
 .history-day__head{
-  padding:11px 14px;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:12px;
-  border-bottom:2px solid var(--line);
-  background:#f3f7fa;
+  gap:10px;
+  min-height:28px;
+  padding:3px 7px;
+  border-bottom:1px solid #999;
+  background:var(--head);
 }
 
-.vh strong{
-  display:flex;
-  align-items:center;
-  gap:9px;
-  font-size:21px;
-}
-
-.vh strong::before{
-  content:"";
-  width:5px;
-  height:23px;
-  border-radius:999px;
-  background:var(--blue);
-}
-
-.vh span,
-.history-day__count{
-  padding:4px 8px;
-  border-radius:999px;
-  background:var(--blue-soft);
-  color:var(--blue-dark);
-  font-size:11px;
-  font-weight:900;
-}
-
-/* ===== 運用の「表」部分 ===== */
-
-.ops{
-  width:100%;
-}
-
-.op{
-  display:grid;
-  grid-template-columns:190px minmax(0,1fr);
-  gap:0;
-  min-height:58px;
-  border-bottom:1px solid var(--line);
-  background:#fff;
-}
-
-.op:nth-child(even){
-  background:var(--row-alt);
-}
-
-.op:last-child{
-  border-bottom:0;
-}
-
-.route-block{
-  padding:11px 13px;
-  border-right:1px solid var(--line);
-  background:rgba(231,242,249,.42);
-}
-
-.route-badge{
-  display:inline-block;
-  min-width:48px;
-  padding:4px 8px;
-  margin-bottom:4px;
-  border:1px solid #bdd7e7;
-  border-radius:6px;
-  background:#fff;
-  color:var(--blue-dark);
-  font-size:12px;
-  font-weight:900;
-  text-align:center;
-}
-
-.route-name{
-  color:#4f6273;
-  font-size:11px;
-  line-height:1.35;
-  font-weight:700;
-}
-
-.trip{
-  display:grid;
-  grid-template-columns:66px minmax(130px,1fr) 34px 66px minmax(130px,1fr);
-  align-items:center;
-  gap:8px;
-  padding:10px 14px;
-  min-width:0;
-}
-
-.time{
-  color:#111923;
-  font-variant-numeric:tabular-nums;
-  font-size:18px;
-  font-weight:950;
-  letter-spacing:.01em;
-}
-
-.stop{
-  min-width:0;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
+.vh strong,
+.history-day__date{
+  color:#111;
   font-size:14px;
   font-weight:800;
 }
 
-.arrow{
-  color:#7890a4;
-  text-align:center;
-  font-size:18px;
+.vh strong::before{
+  content:"車番 ";
+  color:#555;
+  font-size:10px;
+  font-weight:600;
+}
+
+.vh span,
+.history-day__count{
+  color:#555;
+  font-size:10px;
+}
+
+/* 交番表風の3列テーブル */
+.ops-table{
+  width:100%;
+}
+
+.op-head,
+.op-row{
+  display:grid;
+  grid-template-columns:110px minmax(0,1fr) minmax(0,1fr);
+}
+
+.op-head{
+  min-height:22px;
+  background:var(--subhead);
+  border-bottom:1px solid #aaa;
+  color:#444;
+  font-size:10px;
   font-weight:700;
 }
 
-.history-day__date{
-  font-size:16px;
-  font-weight:900;
+.op-head>div{
+  padding:3px 6px;
+  border-right:1px solid #bbb;
+}
+
+.op-head>div:last-child{
+  border-right:0;
+}
+
+.op-row{
+  min-height:34px;
+  border-bottom:1px solid var(--line-soft);
+  background:#fff;
+}
+
+.op-row:nth-child(odd){
+  background:#fafafa;
+}
+
+.op-row:last-child{
+  border-bottom:0;
+}
+
+.op-route,
+.op-point{
+  min-width:0;
+  padding:3px 6px;
+  border-right:1px solid var(--line-soft);
+}
+
+.op-point:last-child{
+  border-right:0;
+}
+
+.op-route{
+  display:flex;
+  align-items:baseline;
+  gap:5px;
+}
+
+.route-no{
+  flex:0 0 auto;
+  color:#00477e;
+  font-size:13px;
+  font-weight:800;
+}
+
+.route-name{
+  min-width:0;
+  overflow:hidden;
+  color:#666;
+  font-size:9px;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.op-point{
+  display:flex;
+  align-items:baseline;
+  gap:6px;
+}
+
+.op-time{
+  flex:0 0 auto;
+  width:38px;
+  font-size:12px;
+  font-weight:800;
+  font-variant-numeric:tabular-nums;
+}
+
+.op-stop{
+  min-width:0;
+  overflow:hidden;
+  font-size:11px;
+  line-height:1.2;
+  text-overflow:ellipsis;
+  white-space:nowrap;
 }
 
 .empty{
-  padding:26px 16px;
-  text-align:center;
-  color:var(--muted);
+  padding:18px;
   background:#fff;
-  border:1px dashed var(--line);
-  border-radius:10px;
+  border:1px solid #bbb;
+  color:#666;
+  text-align:center;
 }
 
-/* ===== タブレット ===== */
-
-@media(max-width:820px){
-  .control-panel{
-    grid-template-columns:1fr 1fr;
-  }
-
-  .control-group--operator,
-  .control-group--search{
-    grid-column:1/-1;
-  }
-
-  .op{
-    grid-template-columns:145px minmax(0,1fr);
-  }
-
-  .trip{
-    grid-template-columns:58px minmax(100px,1fr) 24px 58px minmax(100px,1fr);
-    padding:9px 10px;
-  }
-
-  .route-name{
-    font-size:10px;
-  }
-}
-
-/* ===== スマホ ===== */
-
+/* スマホでもカード化せず、表のまま詰めて表示 */
 @media(max-width:560px){
   .site-header__inner{
-    padding:15px 11px 12px;
+    padding:7px 6px 6px;
   }
 
-  h1{font-size:22px}
+  h1{font-size:17px}
 
-  .page{padding:8px}
+  #updated{font-size:9px}
+
+  .page{
+    padding:5px 4px 18px;
+  }
 
   .control-panel{
-    top:4px;
-    grid-template-columns:1fr;
-    padding:9px;
-    border-radius:10px;
+    gap:5px;
+    padding:5px;
+  }
+
+  .control-group{
+    min-width:calc(50% - 3px);
   }
 
   .control-group--operator,
   .control-group--search{
-    grid-column:auto;
+    width:100%;
+    max-width:none;
   }
 
   #tabs button{
     flex:1;
+    min-height:28px;
+    padding:2px 6px;
+    font-size:11px;
+  }
+
+  select,input{
+    min-height:28px;
+    font-size:11px;
   }
 
   .summary-panel{
-    margin-top:8px;
-    padding:10px 11px;
-    flex-direction:column;
-    align-items:flex-start;
-    gap:3px;
+    margin:3px 0 5px;
+    padding:2px 1px;
+    font-size:10px;
+  }
+
+  .vehicle-list{
+    gap:6px;
   }
 
   .vh,
   .history-day__head{
-    padding:10px 11px;
-  }
-
-  .vh strong{
-    font-size:19px;
-  }
-
-  .op{
-    grid-template-columns:1fr;
-  }
-
-  .route-block{
-    padding:8px 10px 6px;
-    border-right:0;
-    border-bottom:1px solid var(--line-soft);
-    background:#f3f8fb;
-  }
-
-  .route-name{
-    display:inline;
-    margin-left:6px;
-  }
-
-  .trip{
-    grid-template-columns:54px minmax(0,1fr);
-    gap:2px 8px;
-    padding:8px 10px 10px;
-  }
-
-  .arrow{
-    display:none;
-  }
-
-  .time{
-    font-size:16px;
-  }
-
-  .stop{
-    white-space:normal;
-    font-size:13px;
-  }
-/* =========================================================
-   運用一覧 コンパクト表示パッチ
-   既存の unyo.css の一番下に追記してください
-   ========================================================= */
-
-.vehicle-list{gap:6px}
-.vehicle,.history-day{border-radius:8px}
-
-.vh,.history-day__head{
-  padding:6px 10px;
-  min-height:38px;
-}
-.vh strong{gap:6px;font-size:18px}
-.vh strong::before{width:4px;height:18px}
-.vh span,.history-day__count{padding:2px 7px;font-size:10px}
-
-.op{
-  grid-template-columns:150px minmax(0,1fr);
-  min-height:44px;
-}
-.route-block{padding:6px 9px}
-.route-badge{
-  min-width:42px;
-  margin-bottom:2px;
-  padding:2px 6px;
-  font-size:11px;
-}
-.route-name{
-  font-size:10px;
-  line-height:1.2;
-}
-.trip{
-  grid-template-columns:55px minmax(90px,1fr) 20px 55px minmax(90px,1fr);
-  gap:5px;
-  padding:5px 9px;
-}
-.time{font-size:15px;line-height:1}
-.stop{font-size:12px;line-height:1.2}
-.arrow{font-size:14px}
-
-@media(max-width:560px){
-  .page{padding:5px}
-  .vehicle-list{gap:5px}
-
-  .vh,.history-day__head{
-    padding:5px 8px;
-    min-height:34px;
-  }
-  .vh strong{font-size:16px}
-  .vh strong::before{height:16px}
-
-  .op{
-    display:block;
-    min-height:0;
-  }
-
-  .route-block{
-    display:flex;
-    align-items:center;
-    gap:5px;
-    padding:3px 7px;
     min-height:24px;
+    padding:2px 5px;
   }
 
-  .route-badge{
-    flex:0 0 auto;
-    margin:0;
-    min-width:38px;
-    padding:1px 5px;
-    font-size:10px;
+  .vh strong,
+  .history-day__date{
+    font-size:12px;
   }
 
-  .route-name{
-    display:block;
-    margin:0;
-    min-width:0;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
+  .vh strong::before{
     font-size:9px;
   }
 
-  .trip{
-    display:grid;
-    grid-template-columns:44px minmax(0,1fr) 12px 44px minmax(0,1fr);
-    align-items:center;
-    gap:3px;
-    padding:4px 7px 5px;
+  .op-head,
+  .op-row{
+    grid-template-columns:58px minmax(0,1fr) minmax(0,1fr);
   }
 
-  .time{font-size:14px}
-
-  .stop{
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-    font-size:11px;
-    line-height:1.15;
+  .op-head{
+    min-height:18px;
+    font-size:9px;
   }
 
-  .arrow{
+  .op-head>div{
+    padding:2px 3px;
+  }
+
+  .op-row{
+    min-height:29px;
+  }
+
+  .op-route,
+  .op-point{
+    padding:2px 3px;
+  }
+
+  .op-route{
+    display:block;
+  }
+
+  .route-no{
     display:block;
     font-size:11px;
   }
 
-  .control-panel{
-    padding:6px;
-    gap:6px;
+  .route-name{
+    display:none;
   }
 
-  .control-group{gap:3px}
-
-  #tabs button,select,input{
-    min-height:34px;
+  .op-point{
+    display:block;
   }
 
-  #tabs button{
-    padding:5px 9px;
+  .op-time{
+    display:inline;
+    width:auto;
+    margin-right:4px;
+    font-size:10px;
   }
 
-  .summary-panel{
-    padding:6px 8px;
+  .op-stop{
+    display:inline;
+    overflow:visible;
+    font-size:9.5px;
+    line-height:1.1;
+    white-space:normal;
+    word-break:break-all;
   }
-}
-
-  
 }

@@ -32,7 +32,7 @@ function routeParts(o) {
   const no = String(o?.route_no ?? "").trim();
   const name = String(o?.route_name ?? "").trim();
   return {
-    no: no || "系統不明",
+    no: no || "―",
     name
   };
 }
@@ -40,6 +40,16 @@ function routeParts(o) {
 function fmtDate(d) {
   const m = String(d || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
   return m ? `${m[1]}年${Number(m[2])}月${Number(m[3])}日` : d;
+}
+
+function tripTableHead() {
+  return `
+    <div class="op-head" aria-hidden="true">
+      <div>系統</div>
+      <div>起点・時刻</div>
+      <div>終点・時刻</div>
+    </div>
+  `;
 }
 
 function operationHtml(o) {
@@ -50,19 +60,30 @@ function operationHtml(o) {
   const dest = o.destination_stop || "終着不明";
 
   return `
-    <div class="op">
-      <div class="route-block">
-        <div class="route-badge">${esc(r.no)}</div>
-        ${r.name ? `<div class="route-name">${esc(r.name)}</div>` : ""}
+    <div class="op-row">
+      <div class="op-route">
+        <span class="route-no">${esc(r.no)}</span>
+        ${r.name ? `<span class="route-name">${esc(r.name)}</span>` : ""}
       </div>
 
-      <div class="trip">
-        <div class="time">${esc(depTime)}</div>
-        <div class="stop">${esc(origin)}</div>
-        <div class="arrow">→</div>
-        <div class="time">${esc(arrTime)}</div>
-        <div class="stop">${esc(dest)}</div>
+      <div class="op-point">
+        <span class="op-time">${esc(depTime)}</span>
+        <span class="op-stop">${esc(origin)}</span>
       </div>
+
+      <div class="op-point">
+        <span class="op-time">${esc(arrTime)}</span>
+        <span class="op-stop">${esc(dest)}</span>
+      </div>
+    </div>
+  `;
+}
+
+function operationsTable(ops) {
+  return `
+    <div class="ops-table">
+      ${tripTableHead()}
+      ${ops.map(operationHtml).join("")}
     </div>
   `;
 }
@@ -90,15 +111,13 @@ function drawDaily() {
   }
 
   $("list").innerHTML = entries.map(([v, ops]) => `
-    <article class="vehicle">
+    <section class="vehicle">
       <div class="vh">
         <strong>${esc(v)}</strong>
         <span>${ops.length}運行</span>
       </div>
-      <div class="ops">
-        ${ops.map(operationHtml).join("")}
-      </div>
-    </article>
+      ${operationsTable(ops || [])}
+    </section>
   `).join("");
 }
 
@@ -128,9 +147,7 @@ function drawVehicleHistory(data) {
           <div class="history-day__date">${esc(fmtDate(day.date))}</div>
           <div class="history-day__count">${ops.length}運行</div>
         </div>
-        <div class="ops">
-          ${ops.map(operationHtml).join("")}
-        </div>
+        ${operationsTable(ops)}
       </section>
     `;
   }).join("");
