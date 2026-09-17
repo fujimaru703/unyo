@@ -428,4 +428,130 @@ select:focus,input:focus{
     white-space:normal;
     font-size:13px;
   }
+/* =========================================================
+   運用一覧 コンパクト表示パッチ
+   既存の unyo.css の一番下に追記してください
+   ========================================================= */
+
+.vehicle-list{gap:6px}
+.vehicle,.history-day{border-radius:8px}
+
+.vh,.history-day__head{
+  padding:6px 10px;
+  min-height:38px;
+}
+.vh strong{gap:6px;font-size:18px}
+.vh strong::before{width:4px;height:18px}
+.vh span,.history-day__count{padding:2px 7px;font-size:10px}
+
+.op{
+  grid-template-columns:150px minmax(0,1fr);
+  min-height:44px;
+}
+.route-block{padding:6px 9px}
+.route-badge{
+  min-width:42px;
+  margin-bottom:2px;
+  padding:2px 6px;
+  font-size:11px;
+}
+.route-name{
+  font-size:10px;
+  line-height:1.2;
+}
+.trip{
+  grid-template-columns:55px minmax(90px,1fr) 20px 55px minmax(90px,1fr);
+  gap:5px;
+  padding:5px 9px;
+}
+.time{font-size:15px;line-height:1}
+.stop{font-size:12px;line-height:1.2}
+.arrow{font-size:14px}
+
+@media(max-width:560px){
+  .page{padding:5px}
+  .vehicle-list{gap:5px}
+
+  .vh,.history-day__head{
+    padding:5px 8px;
+    min-height:34px;
+  }
+  .vh strong{font-size:16px}
+  .vh strong::before{height:16px}
+
+  .op{
+    display:block;
+    min-height:0;
+  }
+
+  .route-block{
+    display:flex;
+    align-items:center;
+    gap:5px;
+    padding:3px 7px;
+    min-height:24px;
+  }
+
+  .route-badge{
+    flex:0 0 auto;
+    margin:0;
+    min-width:38px;
+    padding:1px 5px;
+    font-size:10px;
+  }
+
+  .route-name{
+    display:block;
+    margin:0;
+    min-width:0;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    font-size:9px;
+  }
+
+  .trip{
+    display:grid;
+    grid-template-columns:44px minmax(0,1fr) 12px 44px minmax(0,1fr);
+    align-items:center;
+    gap:3px;
+    padding:4px 7px 5px;
+  }
+
+  .time{font-size:14px}
+
+  .stop{
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    font-size:11px;
+    line-height:1.15;
+  }
+
+  .arrow{
+    display:block;
+    font-size:11px;
+  }
+
+  .control-panel{
+    padding:6px;
+    gap:6px;
+  }
+
+  .control-group{gap:3px}
+
+  #tabs button,select,input{
+    min-height:34px;
+  }
+
+  #tabs button{
+    padding:5px 9px;
+  }
+
+  .summary-panel{
+    padding:6px 8px;
+  }
+}
+
+  
 }
