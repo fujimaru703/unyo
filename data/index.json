@@ -1,1 +1,1 @@
-{"schema_version":1,"generated_at":"2026-09-17T05:15:46+09:00","operators":{"enoden":{"label":"江ノ電バス","dates":["2026-09-16","2026-09-15","2026-09-14"]}}}
+{"schema_version":1,"generated_at":"2026-09-18T00:38:24+09:00","operators":{"enoden":{"label":"江ノ電バス","dates":["2026-09-16","2026-09-15","2026-09-14"]},"sotetsu":{"label":"相鉄バス","dates":["2026-09-16","2026-09-15"]}}}
