@@ -1,13 +1,15 @@
 {
   "dates": [
+    "2026-09-01",
     "2026-08-31"
   ],
   "counts": {
-    "2026-08-31": 488
+    "2026-08-31": 488,
+    "2026-09-01": 1802
   },
   "operator": "braga",
   "operator_name": "TUB",
   "timezone": "Europe/Lisbon",
-  "latest_date": "2026-08-31",
-  "updated_at": "2026-09-17T21:54:16+01:00"
+  "latest_date": "2026-09-01",
+  "updated_at": "2026-09-17T21:54:45+01:00"
 }
